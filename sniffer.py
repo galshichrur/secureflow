@@ -10,7 +10,7 @@ class TCPSniffer:
         self.is_running: bool = False
         self.packet_handler: Callable[[Packet], None] = packet_handler
 
-    def start_sniffing(self) -> None:
+    def start_sniffing(self, local_ip: str) -> None:
         """Starts sniffing TCP packets from the network."""
         try:
             self.is_running = True
@@ -18,7 +18,7 @@ class TCPSniffer:
             click.echo("Press Ctrl+C to stop.")
 
             sniff(
-                filter="tcp",
+                filter=f"tcp and not src host {local_ip}",
                 prn=self.packet_handler,
                 stop_filter=lambda _: not self.is_running
             )
