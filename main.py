@@ -15,9 +15,10 @@ def cli():
 @click.argument("ip", help="Local IP address")
 @click.option("--threshold", default=100, type=int, help="Set the threshold for SYN packets per window.")
 @click.option("--window", default=10, type=int, help="Set the time window in seconds.")
-def start(ip: str, threshold: int = 100, window: int = 10):
+@click.option("--alert-timeout", default=10, type=int, help="Set the alert timeout in seconds when there is an attack.")
+def start(ip: str, threshold: int = 100, window: int = 10, alert_timeout: int = 300):
     """Start monitoring network traffic."""
-    analyzer = TrafficAnalyzer(threshold, window, on_attack=blocker.block_ip)
+    analyzer = TrafficAnalyzer(threshold, window, alert_timeout, on_attack=blocker.block_ip)
     sniffer = TCPSniffer(packet_handler=analyzer.handle_packet)
 
     sniffer.start_sniffing(ip)
